@@ -15,14 +15,14 @@ def parse_args():
     parser.add_argument(
         "--input", 
         type=str, 
-        default="./input/sign_language.mp4", 
-        help="Path to the input video file (default: ./input/sign_language.mp4)"
+        default="data/input/sign_language.mp4", 
+        help="Path to the input video file (default: data/input/sign_language.mp4)"
     )
     parser.add_argument(
         "--output", 
         type=str, 
-        default="./output/reference", 
-        help="Directory to save output JSON and PNG files (default: ./output/reference)"
+        default="data/output/05_reference", 
+        help="Directory to save output JSON and PNG files (default: data/output/05_reference)"
     )
     return parser.parse_args()
 

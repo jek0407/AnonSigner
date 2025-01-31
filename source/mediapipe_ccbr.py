@@ -14,14 +14,14 @@ def parse_args():
     parser.add_argument(
         "--input", 
         type=str, 
-        default="./input/sign_language.mp4", 
-        help="Path to the input video file (default: ./input/sign_language.mp4)"
+        default="data/input/sign_language.mp4", 
+        help="Path to the input video file (default: data/input/sign_language.mp4)"
     )
     parser.add_argument(
         "--output", 
         type=str, 
-        default="./output/1/ccbr", 
-        help="Directory to save output video and images (default: ./output/1/ccbr)"
+        default="data/output/03_mediapipe_ccbr", 
+        help="Directory to save output video and images (default: data/output/03_mediapipe_ccbr)"
     )
     parser.add_argument("--debug", action="store_true", help="Save individual frames as images for debugging")
     return parser.parse_args()
@@ -39,32 +39,33 @@ cap = cv2.VideoCapture(input_video_path)
 if not cap.isOpened():
     raise ValueError(f"Unable to open video file: {input_video_path}")
 
-# 동영상 해상도 동적으로 가져오기
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-fps = int(cap.get(cv2.CAP_PROP_FPS))
+# 원본 비율 확인
+orig_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+orig_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+# 원본 비율을 유지한 상태로 크기 조정 (긴 변을 256으로 설정)
+if orig_width > orig_height:
+    width = 256
+    height = int((orig_height / orig_width) * 256)
+else:
+    height = 256
+    width = int((orig_width / orig_height) * 256)
 
 # 동영상 저장 설정
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
+fps = int(cap.get(cv2.CAP_PROP_FPS))
 out = cv2.VideoWriter(output_video_path, fourcc, fps, (width, height))
 
 # 랜드마크 그룹별 색상 매핑 함수
 def get_color(group, index, max_index):
-    """
-    그룹과 인덱스에 따라 색상을 반환.
-    - group: 랜드마크 그룹 (left_hand, right_hand, pose, face)
-    - index: 현재 랜드마크의 포인트 번호
-    - max_index: 그룹 내 최대 랜드마크 번호
-    """
     blue_values = {
         "left_hand": 0.0,
         "right_hand": 0.99,
         "pose": 0.33,
         "face": 0.66
     }
-    fixed_blue = blue_values.get(group, 0.5)  # 기본값 0.5 (예외 처리)
+    fixed_blue = blue_values.get(group, 0.5)
 
-    # RED와 GREEN 값을 index에 따라 선형 분포
     red = int((index / max_index) * 255)
     green = int(((max_index - index) / max_index) * 255)
 
@@ -76,7 +77,7 @@ def draw_landmarks_with_group_colors(landmarks, canvas, width, height, group_nam
     for idx, lm in enumerate(landmarks.landmark):
         x, y = int(lm.x * width), int(lm.y * height)
         color = get_color(group_name, idx, max_index)
-        cv2.circle(canvas, (x, y), 3, color, -1)
+        cv2.circle(canvas, (x, y), 1, color, -1)
 
 with mp_holistic.Holistic(
     static_image_mode=False,
@@ -92,6 +93,9 @@ with mp_holistic.Holistic(
         ret, frame = cap.read()
         if not ret:
             break
+
+        # 프레임 크기 조정 (비율 유지)
+        frame = cv2.resize(frame, (width, height))
 
         # BGR 이미지를 RGB로 변환
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

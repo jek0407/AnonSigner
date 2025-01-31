@@ -14,14 +14,14 @@ def parse_args():
     parser.add_argument(
         "--input", 
         type=str, 
-        default="./input/sign_language.mp4", 
-        help="Path to the input video file (default: ./input/sign_language.mp4)"
+        default="data/input/sign_language.mp4", 
+        help="Path to the input video file (default: data/input/sign_language.mp4)"
     )
     parser.add_argument(
         "--output", 
         type=str, 
-        default="./output/ccbr3", 
-        help="Directory to save output videos (default: ./output/ccbr3)"
+        default="data/output/04_mediapipe_ccbr_face", 
+        help="Directory to save output videos (default: data/output/04_mediapipe_ccbr_face)"
     )
     return parser.parse_args()
 
@@ -32,8 +32,6 @@ input_video_path = args.input
 output_dir = args.output
 os.makedirs(output_dir, exist_ok=True)
 output_face_video_path = os.path.join(output_dir, "face_landmarks.mp4")
-output_hand_video_path = os.path.join(output_dir, "hand_landmarks.mp4")
-output_pose_video_path = os.path.join(output_dir, "pose_landmarks.mp4")
 
 # 동영상 처리
 cap = cv2.VideoCapture(input_video_path)
@@ -46,8 +44,6 @@ fps = int(cap.get(cv2.CAP_PROP_FPS))
 frame_width = 256
 frame_height = 256
 face_out = cv2.VideoWriter(output_face_video_path, fourcc, fps, (frame_width, frame_height))
-hand_out = cv2.VideoWriter(output_hand_video_path, fourcc, fps, (frame_width, frame_height))
-pose_out = cv2.VideoWriter(output_pose_video_path, fourcc, fps, (frame_width, frame_height))
 
 # 랜드마크 그룹별 색상 매핑 함수
 def get_color(group, index, max_index):
@@ -101,8 +97,6 @@ with mp_holistic.Holistic(
 
         # 새 캔버스 생성 (검은 배경)
         face_canvas = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
-        hand_canvas = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
-        pose_canvas = np.zeros((frame_height, frame_width, 3), dtype=np.uint8)
 
         # 얼굴 랜드마크 확대 및 적용
         if results.face_landmarks:
@@ -128,29 +122,11 @@ with mp_holistic.Holistic(
                 color = get_color("face", idx, len(results.face_landmarks.landmark) - 1)
                 cv2.circle(face_canvas, (x, y), 1, color, -1)
 
-        # 왼손 랜드마크
-        if results.left_hand_landmarks:
-            draw_landmarks_with_group_colors(results.left_hand_landmarks, hand_canvas, "left_hand")
-
-        # 오른손 랜드마크
-        if results.right_hand_landmarks:
-            draw_landmarks_with_group_colors(results.right_hand_landmarks, hand_canvas, "right_hand")
-
-        # 포즈 랜드마크
-        if results.pose_landmarks:
-            draw_landmarks_with_group_colors(results.pose_landmarks, pose_canvas, "pose")
-
         # 동영상 파일로 저장
         face_out.write(face_canvas)
-        hand_out.write(hand_canvas)
-        pose_out.write(pose_canvas)
 
 cap.release()
 face_out.release()
-hand_out.release()
-pose_out.release()
 cv2.destroyAllWindows()
 
 print(f"Face landmarks video saved at: {output_face_video_path}")
-print(f"Hand landmarks video saved at: {output_hand_video_path}")
-print(f"Pose landmarks video saved at: {output_pose_video_path}")
