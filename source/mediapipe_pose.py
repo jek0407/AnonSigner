@@ -36,7 +36,7 @@ output_dir = args.output
 os.makedirs(output_dir, exist_ok=True)
 
 # 출력 파일명 설정
-output_video_path = os.path.join(output_dir, "pose_landmark.mp4")
+output_video_path = os.path.join(output_dir, "sign_language_pose.mp4")
 
 # 동영상 처리
 cap = cv2.VideoCapture(input_video_path)

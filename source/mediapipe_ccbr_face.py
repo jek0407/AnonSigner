@@ -31,7 +31,7 @@ args = parse_args()
 input_video_path = args.input
 output_dir = args.output
 os.makedirs(output_dir, exist_ok=True)
-output_face_video_path = os.path.join(output_dir, "face_landmarks.mp4")
+output_face_video_path = os.path.join(output_dir, "sign_language_ccbr_face.mp4")
 
 # 동영상 처리
 cap = cv2.VideoCapture(input_video_path)

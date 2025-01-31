@@ -93,25 +93,23 @@ python source/mediapipe_reference.py --input data/input/sign_language.mp4 --outp
 │   ├── sign_language.mp4          # 원본 수화 영상
 │── 📁 output
 │   ├── 📁 01_mediapipe_pose
-│   │   ├── pose_landmark.avi
+│   │   ├── sign_language_pose.mp4
 │   ├── 📁 02_mediapipe_holistic
-│   │   ├── face_landmarks.json
-│   │   ├── hand_landmarks.json
-│   │   ├── pose_landmarks.json
-│   │   ├── segmentation_mask.json
 │   │   ├── sign_language_holistic.mp4
 │   ├── 📁 03_mediapipe_ccbr
 │   │   ├── sign_language_ccbr.mp4
 │   ├── 📁 04_mediapipe_ccbr_face
-│   │   ├── face_landmarks.mp4
+│   │   ├── sign_language_ccbr_face.mp4
 │   ├── 📁 05_reference
+│   │   ├── _README.txt
 │   │   ├── face_landmarks.json
 │   │   ├── face_landmarks.png
 │   │   ├── hand_landmarks.json
 │   │   ├── hand_landmarks.png
 │   │   ├── pose_landmarks.json
 │   │   ├── pose_landmarks.png
-│   │   ├── _README.txt
+│   │   ├── segmentation_mask.json
+│   │   ├── segmentation_mask.png
 ```
 
 ---
