@@ -135,10 +135,8 @@ python source/mediapipe_reference.py --input data/input/sign_language.mp4 --outp
 
 ## 📌 TODO
 
-- [ ] 데이터 익명화 기능 추가 (얼굴 블러 처리 등)
+- [ ]
 
 ---
 
 ## 📜 라이선스
-
-이 프로젝트는 [MIT 라이선스](LICENSE) 하에 배포됩니다.
