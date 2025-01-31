@@ -2,6 +2,26 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import os
+import argparse
+
+# argparse를 사용하여 입력 및 출력 경로 설정
+def parse_args():
+    parser = argparse.ArgumentParser(description="MediaPipe Pose Estimation on Video")
+    parser.add_argument(
+        "--input", 
+        type=str, 
+        default="data/input/sign_language.mp4", 
+        help="Path to the input video file (default: data/input/sign_language.mp4)"
+    )
+    parser.add_argument(
+        "--output", 
+        type=str, 
+        default="data/output/01_mediapipe_pose", 
+        help="Directory to save the output video file (default: data/output/01_mediapipe_pose)"
+    )
+    return parser.parse_args()
+
+args = parse_args()
 
 # MediaPipe Pose 초기화
 mp_pose = mp.solutions.pose
@@ -9,8 +29,14 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 
 # 입력 및 출력 경로 설정
-input_video_path = "./input/sign_language.mp4"  # 입력 동영상 파일
-output_video_path = "./input/pose_landmark.mp4"  # 결과 저장 파일
+input_video_path = args.input
+output_dir = args.output  
+
+# 출력 디렉토리 생성
+os.makedirs(output_dir, exist_ok=True)
+
+# 출력 파일명 설정
+output_video_path = os.path.join(output_dir, "pose_landmark.mp4")
 
 # 동영상 처리
 cap = cv2.VideoCapture(input_video_path)
@@ -52,13 +78,7 @@ with mp_pose.Pose(
             # 동영상 파일로 저장
             out.write(annotated_frame)
 
-        # 실시간 미리보기 (원하는 경우 주석 해제)
-        # cv2.imshow('Pose Detection', annotated_frame)
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
-
 cap.release()
 out.release()
 cv2.destroyAllWindows()
-
 print(f"Pose landmarks video saved at: {output_video_path}")

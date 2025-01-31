@@ -1,1 +1,1 @@
-50번째 Frame에서의 정보
+50번째 Frame에서의 landmark 및 segmentation 정보
